@@ -32,55 +32,54 @@ const CVScanner = () => {
     if (!fileInput) return;
 
     setLoading(true);
-    setTimeout(() => {
-      try {
-        // const jobId = await parseCV(cvFile);
-        // if (jobId) {
-        //   const parsedCV = await getParsedCV(jobId);
-        //   if (parsedCV.data.attributes.status === "success") {
-        //     setCvInfo(parsedCV.data);
-        //   } else {
-        //     setCvInfo(mockParseResult);
-        //   }
-        // }
-        setCvInfo(mockParseResult);
-
-        // Process the response to extract the score and other information
-        const generatedScore = Math.floor(Math.random() * 11) + 70;
-        setScore(generatedScore);
-
-        // Mock job suggestions
-        const suggestedJobs = [
-          "Software Engineer",
-          "Data Scientist",
-          "Product Manager",
-        ];
-        setJobs(suggestedJobs);
-
-        // Mock missing skills
-        const mockMissingSkills = {
-          "Software Engineer": ["React", "Node.js"],
-          "Data Scientist": ["Python", "Machine Learning"],
-          "Product Manager": ["Project Management", "Agile Methodologies"],
-        };
-        setMissingSkills(mockMissingSkills);
-
-        // Mock recommended materials based on missing skills
-        const mockRecommendedMaterials = {
-          React: "React for Beginners - Udemy",
-          "Node.js": "Node.js: The Complete Guide - Udemy",
-          Python: "Learn Python the Hard Way",
-          "Machine Learning": "Machine Learning Crash Course by Google",
-          "Project Management": "Project Management Fundamentals",
-          "Agile Methodologies": "Agile for Beginners - Coursera",
-        };
-        setRecommendedMaterials(mockRecommendedMaterials);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
+    // setTimeout(() => {
+    try {
+      const jobId = await parseCV(cvFile);
+      if (jobId) {
+        const parsedCV = await getParsedCV(jobId);
+        if (parsedCV.data.attributes.status === "success") {
+          setCvInfo(parsedCV.data);
+        } else {
+          setCvInfo(mockParseResult);
+        }
       }
-    }, 5000); // Simulate 5-second delay for processing
+
+      // Process the response to extract the score and other information
+      const generatedScore = Math.floor(Math.random() * 11) + 70;
+      setScore(generatedScore);
+
+      // Mock job suggestions
+      const suggestedJobs = [
+        "Software Engineer",
+        "Data Scientist",
+        "Product Manager",
+      ];
+      setJobs(suggestedJobs);
+
+      // Mock missing skills
+      const mockMissingSkills = {
+        "Software Engineer": ["React", "Node.js"],
+        "Data Scientist": ["Python", "Machine Learning"],
+        "Product Manager": ["Project Management", "Agile Methodologies"],
+      };
+      setMissingSkills(mockMissingSkills);
+
+      // Mock recommended materials based on missing skills
+      const mockRecommendedMaterials = {
+        React: "React for Beginners - Udemy",
+        "Node.js": "Node.js: The Complete Guide - Udemy",
+        Python: "Learn Python the Hard Way",
+        "Machine Learning": "Machine Learning Crash Course by Google",
+        "Project Management": "Project Management Fundamentals",
+        "Agile Methodologies": "Agile for Beginners - Coursera",
+      };
+      setRecommendedMaterials(mockRecommendedMaterials);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+    // }, 5000); // Simulate 5-second delay for processing
   };
   return (
     <>
