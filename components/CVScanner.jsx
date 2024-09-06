@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { parseCV } from "@/lib/parseCV";
+import { getParsedCV } from "@/app/actions";
 
 const CVScanner = () => {
   const [loading, setLoading] = useState(false);
@@ -12,6 +14,7 @@ const CVScanner = () => {
   const [jobs, setJobs] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
   const [recommendedMaterials, setRecommendedMaterials] = useState([]);
+  const [cvInfo, setCvInfo] = useState(false);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -29,101 +32,47 @@ const CVScanner = () => {
 
     setLoading(true);
 
-    const myHeaders = new Headers();
-    myHeaders.append("Accept", "application/json");
-    myHeaders.append(
-      "x-apihub-key",
-      "7nDLXgpdSZro5EhxbYQ7-SqqBk48NS01Tq5qmi1EVGuM8XBlJU"
-    );
-    myHeaders.append(
-      "x-apihub-host",
-      "HR-Resume-or-CV-File-Parser.allthingsdev.co"
-    );
-    myHeaders.append(
-      "x-apihub-endpoint",
-      "82901f2c-a73d-4e06-87c2-db6d7b87b4b3"
-    );
-
-    const formdata = new FormData();
-    formdata.append("file", fileInput);
-    formdata.append("language", "English");
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: formdata,
-      redirect: "follow",
-    };
-
     try {
-      const response = await fetch(
-        "https://HR-Resume-or-CV-File-Parser.proxy-production.allthingsdev.co/api/v1/hr/parse_resume",
-        requestOptions
-      );
-      const result = await response.json();
-
-      if (result.job_id) {
-        // Second fetch to get job status using the job_id
-        const statusHeaders = new Headers();
-        statusHeaders.append("Accept", "application/json");
-        statusHeaders.append(
-          "x-apihub-key",
-          "7nDLXgpdSZro5EhxbYQ7-SqqBk48NS01Tq5qmi1EVGuM8XBlJU"
-        );
-        statusHeaders.append(
-          "x-apihub-host",
-          "HR-Resume-or-CV-File-Parser.allthingsdev.co"
-        );
-        statusHeaders.append(
-          "x-apihub-endpoint",
-          "c447dbb4-d0a2-4f1e-bfe4-eb4047dce945"
-        );
-
-        const statusRequestOptions = {
-          method: "GET",
-          headers: statusHeaders,
-          redirect: "follow",
-        };
-
-        const statusResponse = await fetch(
-          `https://HR-Resume-or-CV-File-Parser.proxy-production.allthingsdev.co/api/v1/hr/parse_resume/job/status/${result.job_id}`,
-          statusRequestOptions
-        );
-        const statusResult = await statusResponse.json();
-
-        console.log(statusResult); // Log the full CV data
-
-        // Process the response to extract the score and other information
-        const generatedScore = Math.floor(Math.random() * 11) + 70;
-        setScore(generatedScore);
-
-        // Mock job suggestions
-        const suggestedJobs = [
-          "Software Engineer",
-          "Data Scientist",
-          "Product Manager",
-        ];
-        setJobs(suggestedJobs);
-
-        // Mock missing skills
-        const mockMissingSkills = {
-          "Software Engineer": ["React", "Node.js"],
-          "Data Scientist": ["Python", "Machine Learning"],
-          "Product Manager": ["Project Management", "Agile Methodologies"],
-        };
-        setMissingSkills(mockMissingSkills);
-
-        // Mock recommended materials based on missing skills
-        const mockRecommendedMaterials = {
-          React: "React for Beginners - Udemy",
-          "Node.js": "Node.js: The Complete Guide - Udemy",
-          Python: "Learn Python the Hard Way",
-          "Machine Learning": "Machine Learning Crash Course by Google",
-          "Project Management": "Project Management Fundamentals",
-          "Agile Methodologies": "Agile for Beginners - Coursera",
-        };
-        setRecommendedMaterials(mockRecommendedMaterials);
+      const jobId = await parseCV(cvFile);
+      if (jobId) {
+        const parsedCV = await getParsedCV(jobId);
+        if (parsedCV.data.attributes.status === "success") {
+          setCvInfo(parsedCV.data);
+        } else {
+          setCvInfo(mockParseResult);
+        }
       }
+
+      // Process the response to extract the score and other information
+      const generatedScore = Math.floor(Math.random() * 11) + 70;
+      setScore(generatedScore);
+
+      // Mock job suggestions
+      const suggestedJobs = [
+        "Software Engineer",
+        "Data Scientist",
+        "Product Manager",
+      ];
+      setJobs(suggestedJobs);
+
+      // Mock missing skills
+      const mockMissingSkills = {
+        "Software Engineer": ["React", "Node.js"],
+        "Data Scientist": ["Python", "Machine Learning"],
+        "Product Manager": ["Project Management", "Agile Methodologies"],
+      };
+      setMissingSkills(mockMissingSkills);
+
+      // Mock recommended materials based on missing skills
+      const mockRecommendedMaterials = {
+        React: "React for Beginners - Udemy",
+        "Node.js": "Node.js: The Complete Guide - Udemy",
+        Python: "Learn Python the Hard Way",
+        "Machine Learning": "Machine Learning Crash Course by Google",
+        "Project Management": "Project Management Fundamentals",
+        "Agile Methodologies": "Agile for Beginners - Coursera",
+      };
+      setRecommendedMaterials(mockRecommendedMaterials);
     } catch (error) {
       console.error("Error:", error);
     } finally {
