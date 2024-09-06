@@ -47,8 +47,8 @@ const Interview = () => {
   };
 
   const handleSubmit = async () => {
-    // if (!cvFile || !formData.role || !formData.company || !formData.jobType)
-    //   return;
+    if (!cvFile || !formData.role || !formData.company || !formData.jobType)
+      return;
 
     setLoading(true);
 
