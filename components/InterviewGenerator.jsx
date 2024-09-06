@@ -19,6 +19,7 @@ import {
 import { parseCV } from "@/lib/parseCV";
 import { getParsedCV } from "@/app/actions";
 import { mockParseResult } from "@/mocks/parse_result";
+import InterviewDialog from "./InterviewDialog";
 
 const InterviewGenerator = () => {
   const [formData, setFormData] = useState({
@@ -33,6 +34,8 @@ const InterviewGenerator = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cvInfo, setCvInfo] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,27 +52,28 @@ const InterviewGenerator = () => {
   };
 
   const handleSubmit = async () => {
-    if (!cvFile || !formData.role || !formData.company || !formData.jobType)
-      return;
+    // if (!cvFile || !formData.role || !formData.company || !formData.jobType)
+    //   return;
 
     setLoading(true);
 
     try {
-      const jobId = await parseCV(cvFile);
-      if (jobId) {
-        const parsedCV = await getParsedCV(jobId);
-        if (parsedCV.data.attributes.status === "success") {
-          setCvInfo(parsedCV.data);
-        } else {
-          setCvInfo(mockParseResult);
-        }
-      }
+      // const jobId = await parseCV(cvFile);
+      // if (jobId) {
+      //   const parsedCV = await getParsedCV(jobId);
+      //   if (parsedCV.data.attributes.status === "success") {
+      //     setCvInfo(parsedCV.data);
+      //   } else {
+      //     setCvInfo(mockParseResult);
+      //   }
+      // }
+      setCvInfo(mockParseResult);
 
       const mockQuestions = [
         {
           question: "Tell me a little about yourself?",
           bestAnswer: `
-              I am a passionate and dedicated individual with a strong background in [mention your field or expertise]. I have experience working on [mention key projects or experiences], where I honed my skills in [mention relevant skills]. I enjoy problem-solving and thrive in dynamic environments where I can continuously learn and grow. Outside of work, I am deeply interested in [mention hobbies or personal interests], which help me maintain a balanced perspective and foster creativity in my professional life.
+              I am a passionate and dedicated individual with a strong background in software engineering. I have experience working on frontend and backend development, where I honed my skills in NextJS, Golang, etc. I enjoy problem-solving and thrive in dynamic environments where I can continuously learn and grow. Outside of work, I am deeply interested in reading a book, which help me maintain a balanced perspective and foster creativity in my professional life.
             `,
         },
         {
@@ -83,7 +87,7 @@ const InterviewGenerator = () => {
         {
           question: "Why should we hire you?",
           bestAnswer: `
-              You should hire me because I bring a unique combination of skills, experience, and passion that align with the needs of your company. I am not only technically skilled in [mention relevant technical skills] but also have a strong sense of collaboration and a growth mindset, which allows me to contribute positively to the team and continuously learn. I am confident that I can make meaningful contributions to your projects and help your company achieve its goals, while also growing personally and professionally.
+              You should hire me because I bring a unique combination of skills, experience, and passion that align with the needs of your company. I am not only technically skilled in software development but also have a strong sense of collaboration and a growth mindset, which allows me to contribute positively to the team and continuously learn. I am confident that I can make meaningful contributions to your projects and help your company achieve its goals, while also growing personally and professionally.
             `,
         },
       ];
@@ -95,6 +99,10 @@ const InterviewGenerator = () => {
     }
   };
 
+  const handleTrainClick = (question) => {
+    setCurrentQuestion(question);
+    setDialogOpen(true);
+  };
   return (
     <>
       <div className="mb-4 space-y-4">
@@ -160,6 +168,24 @@ const InterviewGenerator = () => {
               <AccordionTrigger className="">{item.question}</AccordionTrigger>
               <AccordionContent className="p-4 w-full">
                 <p>{item.bestAnswer}</p>
+                <div className="flex gap-2 items-center mt-4">
+                  <Button
+                    onClick={() => {
+                      const speech = new SpeechSynthesisUtterance(
+                        item.bestAnswer
+                      );
+                      window.speechSynthesis.speak(speech);
+                    }}
+                    className="text-left"
+                  >
+                    Listen 🔊
+                  </Button>
+                  <InterviewDialog
+                    question={item.question}
+                    isOpen={dialogOpen}
+                    onClose={() => setDialogOpen(false)}
+                  />
+                </div>
               </AccordionContent>
             </AccordionItem>
           ))}
