@@ -29,8 +29,8 @@ export default function SidebarComponent() {
       ),
     },
     {
-      label: "Profile",
-      href: "profile",
+      label: "Cover Letter Generator",
+      href: "cover-letter-generator",
       icon: (
         <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),

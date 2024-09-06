@@ -2,22 +2,37 @@ import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { stringSimilarity } from "string-similarity-js";
 
-const InterviewDialog = ({ question, isOpen, onClose }) => {
+const InterviewDialog = ({ question, bestAnswer }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
   const [recorder, setRecorder] = useState(null);
   const [userAnswer, setUserAnswer] = useState("");
   const [score, setScore] = useState(null);
 
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.lang = "en-US";
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript;
+    setUserAnswer((prev) => prev + (prev.length ? ". " : "") + transcript);
+  };
+
   const startRecording = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      setUserAnswer("");
+      setScore(null);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const newRecorder = new MediaRecorder(stream);
       setRecorder(newRecorder);
@@ -28,22 +43,28 @@ const InterviewDialog = ({ question, isOpen, onClose }) => {
 
       newRecorder.start();
       setIsRecording(true);
+      recognition.start(); // Start speech recognition
     }
   };
 
   const stopRecording = () => {
     if (recorder) {
       recorder.stop();
-      const simulatedAnswer = "This is a sample recorded answer.";
-      setUserAnswer(simulatedAnswer);
-      simulateScoring(simulatedAnswer);
+      recognition.stop(); // Stop speech recognition
       setIsRecording(false);
+      // Evaluate the user's answer against the best answer
+      evaluateAnswer(userAnswer);
     }
   };
 
-  const simulateScoring = (answer) => {
-    // Mock scoring logic (Replace with actual scoring algorithm)
-    const score = Math.floor(Math.random() * 100);
+  const evaluateAnswer = (userAnswer) => {
+    // Calculate similarity score
+    const similarity = stringSimilarity(
+      userAnswer.toLowerCase(),
+      bestAnswer.toLowerCase()
+    );
+    // Convert similarity to a score out of 100
+    const score = Math.floor(similarity * 100);
     setScore(score);
   };
 

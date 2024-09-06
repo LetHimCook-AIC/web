@@ -106,13 +106,13 @@ const InterviewGenerator = () => {
       <div className="mb-4 space-y-4">
         <Input
           name="role"
-          placeholder="Role yang sedang diapply"
+          placeholder="Role"
           value={formData.role}
           onChange={handleInputChange}
         />
         <Input
           name="company"
-          placeholder="Perusahaan yang sedang diapply"
+          placeholder="Company"
           value={formData.company}
           onChange={handleInputChange}
         />
@@ -120,10 +120,10 @@ const InterviewGenerator = () => {
           name="jobType"
           value={formData.jobType}
           onValueChange={(value) => handleSelect("jobType", value)}
-          placeholder="Jenis Pekerjaan"
+          placeholder="Job Type"
         >
           <SelectTrigger className="">
-            <SelectValue placeholder="Jenis Pekerjaan" />
+            <SelectValue placeholder="Job Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Intern">Intern</SelectItem>
@@ -162,8 +162,7 @@ const InterviewGenerator = () => {
                   </Button>
                   <InterviewDialog
                     question={item.question}
-                    isOpen={dialogOpen}
-                    onClose={() => setDialogOpen(false)}
+                    bestAnswer={item.bestAnswer}
                   />
                 </div>
               </AccordionContent>

@@ -77,7 +77,7 @@ export const mockParseResult = {
           school_type: "University or equivalent",
           degree_type: "Bachelor’s Degree or equivalent",
           faculty_department: "Information System and Technology, STEI",
-          specialization_subjects: "",
+          specialization_subjects: "Software Engineering",
           country: "Indonesia",
           start_date: "2021-08-01",
           end_date: "2025-09-01",
