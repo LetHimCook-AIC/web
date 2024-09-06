@@ -57,9 +57,13 @@ const CVScanner = () => {
       const generatedScore = Math.floor(Math.random() * 11) + 70;
       setScore(generatedScore);
 
-      // Mock job suggestions
-      const suggestedJobs = await suggestJobs(skills);
-      setJobs(suggestedJobs.job_recommendations);
+      // Job suggestions
+      try {
+        const suggestedJobs = await suggestJobs(skills);
+        setJobs(suggestedJobs.job_recommendations);
+      } catch (error) {
+        setJobs([]);
+      }
 
       // Mock missing skills
       const mockMissingSkills = {
