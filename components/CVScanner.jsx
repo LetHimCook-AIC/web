@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { parseCV } from "@/lib/parseCV";
 import { getParsedCV } from "@/app/actions";
+import { mockParseResult } from "@/mocks/parse_result";
 
 const CVScanner = () => {
   const [loading, setLoading] = useState(false);
@@ -33,15 +34,16 @@ const CVScanner = () => {
     setLoading(true);
 
     try {
-      const jobId = await parseCV(cvFile);
-      if (jobId) {
-        const parsedCV = await getParsedCV(jobId);
-        if (parsedCV.data.attributes.status === "success") {
-          setCvInfo(parsedCV.data);
-        } else {
-          setCvInfo(mockParseResult);
-        }
-      }
+      // const jobId = await parseCV(cvFile);
+      // if (jobId) {
+      //   const parsedCV = await getParsedCV(jobId);
+      //   if (parsedCV.data.attributes.status === "success") {
+      //     setCvInfo(parsedCV.data);
+      //   } else {
+      //     setCvInfo(mockParseResult);
+      //   }
+      // }
+      setCvInfo(mockParseResult);
 
       // Process the response to extract the score and other information
       const generatedScore = Math.floor(Math.random() * 11) + 70;
