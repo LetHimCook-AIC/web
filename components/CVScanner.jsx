@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { parseCV } from "@/lib/parseCV";
 import { getParsedCV } from "@/app/actions";
 import { mockParseResult } from "@/mocks/parse_result";
@@ -32,54 +32,55 @@ const CVScanner = () => {
     if (!fileInput) return;
 
     setLoading(true);
+    setTimeout(() => {
+      try {
+        // const jobId = await parseCV(cvFile);
+        // if (jobId) {
+        //   const parsedCV = await getParsedCV(jobId);
+        //   if (parsedCV.data.attributes.status === "success") {
+        //     setCvInfo(parsedCV.data);
+        //   } else {
+        //     setCvInfo(mockParseResult);
+        //   }
+        // }
+        setCvInfo(mockParseResult);
 
-    try {
-      // const jobId = await parseCV(cvFile);
-      // if (jobId) {
-      //   const parsedCV = await getParsedCV(jobId);
-      //   if (parsedCV.data.attributes.status === "success") {
-      //     setCvInfo(parsedCV.data);
-      //   } else {
-      //     setCvInfo(mockParseResult);
-      //   }
-      // }
-      setCvInfo(mockParseResult);
+        // Process the response to extract the score and other information
+        const generatedScore = Math.floor(Math.random() * 11) + 70;
+        setScore(generatedScore);
 
-      // Process the response to extract the score and other information
-      const generatedScore = Math.floor(Math.random() * 11) + 70;
-      setScore(generatedScore);
+        // Mock job suggestions
+        const suggestedJobs = [
+          "Software Engineer",
+          "Data Scientist",
+          "Product Manager",
+        ];
+        setJobs(suggestedJobs);
 
-      // Mock job suggestions
-      const suggestedJobs = [
-        "Software Engineer",
-        "Data Scientist",
-        "Product Manager",
-      ];
-      setJobs(suggestedJobs);
+        // Mock missing skills
+        const mockMissingSkills = {
+          "Software Engineer": ["React", "Node.js"],
+          "Data Scientist": ["Python", "Machine Learning"],
+          "Product Manager": ["Project Management", "Agile Methodologies"],
+        };
+        setMissingSkills(mockMissingSkills);
 
-      // Mock missing skills
-      const mockMissingSkills = {
-        "Software Engineer": ["React", "Node.js"],
-        "Data Scientist": ["Python", "Machine Learning"],
-        "Product Manager": ["Project Management", "Agile Methodologies"],
-      };
-      setMissingSkills(mockMissingSkills);
-
-      // Mock recommended materials based on missing skills
-      const mockRecommendedMaterials = {
-        React: "React for Beginners - Udemy",
-        "Node.js": "Node.js: The Complete Guide - Udemy",
-        Python: "Learn Python the Hard Way",
-        "Machine Learning": "Machine Learning Crash Course by Google",
-        "Project Management": "Project Management Fundamentals",
-        "Agile Methodologies": "Agile for Beginners - Coursera",
-      };
-      setRecommendedMaterials(mockRecommendedMaterials);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+        // Mock recommended materials based on missing skills
+        const mockRecommendedMaterials = {
+          React: "React for Beginners - Udemy",
+          "Node.js": "Node.js: The Complete Guide - Udemy",
+          Python: "Learn Python the Hard Way",
+          "Machine Learning": "Machine Learning Crash Course by Google",
+          "Project Management": "Project Management Fundamentals",
+          "Agile Methodologies": "Agile for Beginners - Coursera",
+        };
+        setRecommendedMaterials(mockRecommendedMaterials);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 5000); // Simulate 5-second delay for processing
   };
   return (
     <>
@@ -98,51 +99,54 @@ const CVScanner = () => {
         </Button>
       </div>
 
-      {loading && (
+      {loading ? (
         <Alert type="info" className="mb-4">
-          Loading your CV, please wait...
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>Loading your CV, please wait...</AlertDescription>
         </Alert>
-      )}
+      ) : (
+        score !== null && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">
+              CV Score: {score}/100
+            </h2>
 
-      {score !== null && (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">CV Score: {score}/100</h2>
+            <h3 className="text-lg font-medium mb-2">Job Suggestions:</h3>
+            <ul className="list-disc pl-5 mb-4">
+              {jobs.map((job) => (
+                <li key={job} className="mb-1">
+                  {job}
+                </li>
+              ))}
+            </ul>
 
-          <h3 className="text-lg font-medium mb-2">Job Suggestions:</h3>
-          <ul className="list-disc pl-5 mb-4">
-            {jobs.map((job) => (
-              <li key={job} className="mb-1">
-                {job}
-              </li>
-            ))}
-          </ul>
-
-          {jobs.length > 0 && (
-            <div>
-              <h3 className="text-lg font-medium mb-2">Missing Skills:</h3>
-              <ul className="list-disc pl-5 mb-4">
-                {jobs.map((job) => (
-                  <li key={job} className="mb-1">
-                    <strong>{job}:</strong> {missingSkills[job].join(", ")}
-                  </li>
-                ))}
-              </ul>
-
-              <h3 className="text-lg font-medium mb-2">
-                Recommended Learning Materials:
-              </h3>
-              <ul className="list-disc pl-5">
-                {jobs.flatMap((job) =>
-                  missingSkills[job].map((skill) => (
-                    <li key={skill} className="mb-1">
-                      <strong>{skill}:</strong> {recommendedMaterials[skill]}
+            {jobs.length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium mb-2">Missing Skills:</h3>
+                <ul className="list-disc pl-5 mb-4">
+                  {jobs.map((job) => (
+                    <li key={job} className="mb-1">
+                      <strong>{job}:</strong> {missingSkills[job].join(", ")}
                     </li>
-                  ))
-                )}
-              </ul>
-            </div>
-          )}
-        </div>
+                  ))}
+                </ul>
+
+                <h3 className="text-lg font-medium mb-2">
+                  Recommended Learning Materials:
+                </h3>
+                <ul className="list-disc pl-5">
+                  {jobs.flatMap((job) =>
+                    missingSkills[job].map((skill) => (
+                      <li key={skill} className="mb-1">
+                        <strong>{skill}:</strong> {recommendedMaterials[skill]}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+        )
       )}
     </>
   );

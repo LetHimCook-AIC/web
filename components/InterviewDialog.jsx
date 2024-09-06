@@ -54,6 +54,7 @@ const InterviewDialog = ({ question, isOpen, onClose }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
+          <DialogTitle>Question</DialogTitle>
           <button
             onClick={() => {
               const speech = new SpeechSynthesisUtterance(question);
