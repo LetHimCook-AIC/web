@@ -34,7 +34,7 @@ const CVScanner = () => {
     setLoading(true);
     // setTimeout(() => {
     try {
-      const jobId = await parseCV(cvFile);
+      const jobId = await parseCV(fileInput);
       if (jobId) {
         const parsedCV = await getParsedCV(jobId);
         if (parsedCV.data.attributes.status === "success") {
