@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockParseResult } from "@/mocks/parse_result";
+import { mockParseResult } from "@/mocks/data";
 
 const CoverLetterGenerator = () => {
   const [formData, setFormData] = useState({
@@ -74,7 +74,7 @@ const CoverLetterGenerator = () => {
       education_qualifications: educations,
       skills,
     } = cvInfo.attributes.result;
-    console.log(name);
+
     return `
 Dear Hiring Manager at ${company},
 

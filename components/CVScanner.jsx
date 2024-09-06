@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { parseCV } from "@/lib/parseCV";
+import { parseCV, suggestJobs } from "@/lib/api";
 import { getParsedCV } from "@/app/actions";
-import { mockParseResult } from "@/mocks/parse_result";
+import { mockParseResult } from "@/mocks/data";
+import { getUniqueSkills } from "@/lib/utils";
 
 const CVScanner = () => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,7 @@ const CVScanner = () => {
   const [jobs, setJobs] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
   const [recommendedMaterials, setRecommendedMaterials] = useState([]);
-  const [cvInfo, setCvInfo] = useState(false);
+  const [cvInfo, setCvInfo] = useState(null);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -34,13 +35,21 @@ const CVScanner = () => {
     setLoading(true);
     // setTimeout(() => {
     try {
+      let skills = [];
       const jobId = await parseCV(fileInput);
       if (jobId) {
         const parsedCV = await getParsedCV(jobId);
-        if (parsedCV.data.attributes.status === "success") {
-          setCvInfo(parsedCV.data);
-        } else {
+        if (parsedCV && parsedCV.success) {
           setCvInfo(mockParseResult);
+          skills = getUniqueSkills(mockParseResult.attributes.result);
+        } else {
+          if (parsedCV.data?.attributes.status === "success") {
+            setCvInfo(parsedCV.data);
+            skills = getUniqueSkills(parsedCV.data.attributes.result);
+          } else {
+            setCvInfo(mockParseResult);
+            skills = getUniqueSkills(mockParseResult.attributes.result);
+          }
         }
       }
 
@@ -49,12 +58,8 @@ const CVScanner = () => {
       setScore(generatedScore);
 
       // Mock job suggestions
-      const suggestedJobs = [
-        "Software Engineer",
-        "Data Scientist",
-        "Product Manager",
-      ];
-      setJobs(suggestedJobs);
+      const suggestedJobs = await suggestJobs(skills);
+      setJobs(suggestedJobs.job_recommendations);
 
       // Mock missing skills
       const mockMissingSkills = {
@@ -125,7 +130,10 @@ const CVScanner = () => {
                 <ul className="list-disc pl-5 mb-4">
                   {jobs.map((job) => (
                     <li key={job} className="mb-1">
-                      <strong>{job}:</strong> {missingSkills[job].join(", ")}
+                      <strong>{job}:</strong>{" "}
+                      {missingSkills[job]
+                        ? missingSkills[job].join(", ")
+                        : "-  "}
                     </li>
                   ))}
                 </ul>
@@ -135,11 +143,16 @@ const CVScanner = () => {
                 </h3>
                 <ul className="list-disc pl-5">
                   {jobs.flatMap((job) =>
-                    missingSkills[job].map((skill) => (
-                      <li key={skill} className="mb-1">
-                        <strong>{skill}:</strong> {recommendedMaterials[skill]}
-                      </li>
-                    ))
+                    missingSkills[job] ? (
+                      missingSkills[job].map((skill) => (
+                        <li key={skill} className="mb-1">
+                          <strong>{skill}:</strong>{" "}
+                          {recommendedMaterials[skill]}
+                        </li>
+                      ))
+                    ) : (
+                      <></>
+                    )
                   )}
                 </ul>
               </div>

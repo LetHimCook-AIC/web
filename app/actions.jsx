@@ -3,7 +3,7 @@
 export const getParsedCV = async (jobId) => {
   const myHeaders = new Headers();
   myHeaders.append("Accept", "application/json");
-  myHeaders.append("x-apihub-key", process.env.API_KEY);
+  myHeaders.append("x-apihub-key", process.env.NEXT_PUBLIC_API_KEY);
   myHeaders.append(
     "x-apihub-host",
     "HR-Resume-or-CV-File-Parser.allthingsdev.co"
@@ -17,7 +17,7 @@ export const getParsedCV = async (jobId) => {
   };
 
   const response = await fetch(
-    `https://HR-Resume-or-CV-File-Parser.proxy-production.allthingsdev.co/api/v1/hr/parse_resume/job/status/${jobId}`,
+    `${process.env.NEXT_PUBLIC_PARSER_BACKEND_URL}/job/status/${jobId}`,
     requestOptions
   );
   const result = await response.json();
