@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen dark:text-gray-200 p-6 w-full">
       <div className="flex flex-col justify-center items-center mb-8 text-center">
-        <h1 className="text-5xl font-bold mb-2">CrotVitae</h1>
+        <h1 className="text-5xl font-bold mb-2">JobSage</h1>
         <p className="text-xl font-semibold mb-5">
           <span className="underline">AI-powered</span> job preparation platform
         </p>

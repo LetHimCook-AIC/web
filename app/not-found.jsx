@@ -17,7 +17,7 @@ const NotFound = () => {
         </Button>
       </div>
       <div className="absolute bottom-4 text-sm text-gray-600">
-        <p>© 2024 CrotVitae. All rights reserved.</p>
+        <p>© 2024 JobSage. All rights reserved.</p>
       </div>
     </main>
   );

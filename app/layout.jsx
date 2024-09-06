@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "CrotVitae",
+  title: "JobSage",
   description: "AI Powered Job Preparation",
 };
 
